@@ -61,9 +61,13 @@ if rails_2_4_or_newer && arel_older_than_7_1
 end
 
 begin
-  TestCaseClass = MiniTest::Test
+  TestCaseClass = Minitest::Test
 rescue NameError
-  TestCaseClass = MiniTest::Unit::TestCase
+  begin
+    TestCaseClass = MiniTest::Test
+  rescue NameError
+    TestCaseClass = MiniTest::Unit::TestCase
+  end
 end
 
 require 'default_value_for'
@@ -71,7 +75,7 @@ require 'default_value_for'
 puts "\nTesting with Active Record version #{ActiveRecord::VERSION::STRING}"
 puts "\nTesting with Action Pack version #{ActionPack::VERSION::STRING}\n\n"
 
-ActiveRecord::Base.default_timezone = :local
+ActiveRecord::Base.try(:default_timezone=, :local)
 ActiveRecord::Base.logger           = Logger.new(STDERR)
 ActiveRecord::Base.logger.level     = Logger::WARN
 
